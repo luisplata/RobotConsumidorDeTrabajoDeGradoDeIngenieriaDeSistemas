@@ -20,6 +20,8 @@
 			var robot;
 			var json;
 			var instrucciones ;
+			var tamanioDePantalla;
+			var posicionAnterior = {x:0,y:0};
 
 			state.preload = function () {
 				//cargamos el fondo
@@ -50,9 +52,12 @@
 				//escalada del robot
 				this.robot.scaleY = this.robot.scaleX = escalada;
 				//posicionamiento del robot
-				//console.log(robot.mitad);
+				tamanioDePantalla = (this.game.stage.width/8);
 				this.robot.x = (robot.mitad);
 				this.robot.y =(robot.mitad);
+				posicionAnterior.x = posicionAnterior.y = robot.mitad;
+				//this.robot.x = (robot.mitad)+672;
+				//this.robot.y =(robot.mitad)+;//96 es el tamaño de cada cuadro
 				
 			};
 			var indice = 0;//indicar por donde vamos
@@ -74,21 +79,34 @@
 			
 			function adelante(x,y,robot){
 				
-				console.log(x+" "+y);
+				//console.log((posicionAnterior.y - tamanioDePantalla)+" "+y);
 				
 				switch (haciaDondeMiraElRobot){
 					case 0:
 						
 						arriba(robot);
-						if((robot.y - 63) == y ){
+						if((posicionAnterior.y - tamanioDePantalla) == y ){
+							posicionAnterior.x = x;
+							posicionAnterior.y = y;
 							indice++;
 						}
 						break;
 					case 1:
 						derecha(robot);
+						if((posicionAnterior.x + tamanioDePantalla) == x ){
+							posicionAnterior.x = x;
+							posicionAnterior.y = y;
+							indice++;
+						}
 						break;
 					case 2:
 						abajo(robot);
+						//console.log(y - tamanioDePantalla); 	
+						if((posicionAnterior.y + tamanioDePantalla) == y ){
+							posicionAnterior.x = x;
+							posicionAnterior.y = y;
+							indice++;
+						}
 						break;
 					case 3:
 						izquierda(robot);
@@ -99,9 +117,11 @@
 			
 			function giroDerecha(){
 				haciaDondeMiraElRobot++;
+				indice++;
 			}
 			function giroIzquierda(){
 				haciaDondeMiraElRobot--;
+				indice++;
 			}
 			
 			state.update = function () {
@@ -133,8 +153,10 @@
 				}
 				
 				
-				if(indice >= instrucciones.secuencia.length){
+				if(indice == instrucciones.secuencia.length){
 					//ejecutamos la secuencia de fin del juego
+					alert("Fin del juego! :P");
+					indice++;
 				}
 				
 			};
@@ -164,7 +186,7 @@
 			function comenzar(){
 				
 				//obtenemos el json
-				json = '{"imagen":"http://localhost/p2/images/Tablero.jpg","puntoEntrada":1,"puntoSalida":8,"secuencia":[0,2,0,1,0,1,0]}';
+				json = '{"imagen":"http://localhost/p2/images/Tablero.jpg","puntoEntrada":1,"puntoSalida":8,"secuencia":[0,0,1,0,0,0,2,0,1,0,2,0,1,0,2,0,0,1,0,0,1,0]}';
 				instrucciones = JSON.parse(json);
 				
 				console.log(instrucciones);
