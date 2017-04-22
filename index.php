@@ -40,7 +40,9 @@
 				
 				//Creamos el texto de fin de juego
 				this.fin = new Kiwi.HUD.Widget.TextField( this.game, 'FIN DEL LABERINTO', 50, 50 );
-				this.game.huds.defaultHUD.addWidget( this.fin );
+				this.game.huds.defaultHUD.addWidget(this.fin);
+				this.fin.x = -100;
+				this.fin.y = -100;
 				this.fin.style.color = '#5F5F5F';
 				
 				//creamos la altura en X y Y para ponerlos en 0 al iniciar
@@ -212,6 +214,9 @@
 				if(indice == instrucciones.secuencia.length){
 					//ejecutamos la secuencia de fin del juego
 					console.log("Fin del juego");
+					this.fin.style.fontSize = '40px';
+					this.fin.x = this.game.stage.width/4;
+					this.fin.y = this.game.stage.width/2;
 					return false;
 				}
 				
@@ -232,18 +237,38 @@
 			};
 			document.addEventListener("DOMContentLoaded", function(){
 			  
-				console.log("Comenzo a preguntar");
+				//console.log("Comenzo a preguntar");
 				//en 10 sec
-				setTimeout(comenzar,200);
+				//setTimeout(comenzar,200);
+				ajaxGet("./seudoPensante.php",comenzar);
 			});
 			//Las opciones del simulador
 			
+			function ajaxGet(url, funcion) {
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					console.log(this.responseText);
+					json = this.responseText;
+					instrucciones = JSON.parse(json);
+					if(!instrucciones.hayRespuesta){
+						alert("No hay Respuesta!,clic en aceptar para recargar la pagina");
+						location.reload(true);
+					}
+					funcion();
+				}else{
+					
+				}
+			  };
+			  xhttp.open("GET", url, true);
+			  xhttp.send();
+			}
 			
 			function comenzar(){
 				
 				//obtenemos el json
-				json = '{"imagen":"http://localhost/p2/images/Tablero.jpg","puntoEntrada":0,"secuencia":[0,0,1,0,0,0,2,0,1,0,2,0,1,0,2,0,0,1,0,0,1,0]}';
-				instrucciones = JSON.parse(json);
+				//json = '{"imagen":"http://localhost/p2/images/Tablero.jpg","puntoEntrada":0,"secuencia":[0,0,1,0,0,0,2,0,1,0,2,0,1,0,2,0,0,1,0,0,1,0]}';
+				
 				
 				console.log(instrucciones);
 				
